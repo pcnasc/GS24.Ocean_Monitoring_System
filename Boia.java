@@ -1,20 +1,38 @@
-public class Boia {
-    private String coordenadas;
+class Boia {
+    private double latitude;
+    private double longitude;
     private int hashCode;
     private double salinidade;
     private double temperatura;
 
     public Boia(String coordenadas) {
-        this.coordenadas = coordenadas;
-        this.hashCode = gerarHashCode(coordenadas);
+        String[] partes = coordenadas.split(" ");
+        this.latitude = Double.parseDouble(partes[0]);
+        this.longitude = Double.parseDouble(partes[1]);
+        this.hashCode = gerarHashCode();
     }
 
-    public String getCoordenadas() {
-        return coordenadas;
+    private int gerarHashCode() {
+        // A lógica de geração do hash code baseado na especificação
+        String latStr = String.format("%.2f", Math.abs(latitude)).replace(".", "");
+        String lonStr = String.format("%.2f", Math.abs(longitude)).replace(".", "");
+        return Integer.parseInt(latStr.substring(1, 2) + latStr.substring(3, 4) + lonStr.substring(1, 2) + lonStr.substring(3, 4));
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public int getHashCode() {
         return hashCode;
+    }
+
+    public String getCoordenadas() {
+        return String.format("Lat: %.2f Lon: %.2f", latitude, longitude);
     }
 
     public double getSalinidade() {
@@ -35,12 +53,7 @@ public class Boia {
 
     @Override
     public String toString() {
-        return "Boia [coordenadas=" + coordenadas + ", hashCode=" + hashCode + ", salinidade=" + salinidade + ", temperatura=" + temperatura + "]";
-    }
-
-    private int gerarHashCode(String coordenadas) {
-        coordenadas = coordenadas.replace(" ", "");
-        String hashStr = "" + coordenadas.charAt(1) + coordenadas.charAt(2) + coordenadas.charAt(7) + coordenadas.charAt(8);
-        return Integer.parseInt(hashStr);
+        return String.format("Boia [coordenadas=%s, hashCode=%d, salinidade=%.2f, temperatura=%.2f]",
+                getCoordenadas(), hashCode, salinidade, temperatura);
     }
 }

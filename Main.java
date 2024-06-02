@@ -8,9 +8,9 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        lerCoordenadas("src/coordenadas.txt");
+        gerarVetorBoias("src/coordenadas.txt");
         lerMedidas(scanner);
-        ordenarBoias();
+        ordenarBoiasPorBolha();
 
         int opcao;
         do {
@@ -43,9 +43,11 @@ public class Main {
                     System.out.println("Opção inválida. Tente novamente.");
             }
         } while (opcao != 0);
+
+        scanner.close();
     }
 
-    private static void lerCoordenadas(String filename) {
+    private static void gerarVetorBoias(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String linha;
             while ((linha = br.readLine()) != null && count < MAX_BOIAS) {
@@ -69,16 +71,19 @@ public class Main {
         }
     }
 
-    private static void ordenarBoias() {
-        for (int i = 1; i < count; i++) {
-            Boia key = boias[i];
-            int j = i - 1;
-            while (j >= 0 && boias[j].getHashCode() > key.getHashCode()) {
-                boias[j + 1] = boias[j];
-                j = j - 1;
+    private static void ordenarBoiasPorBolha() {
+        boolean trocou;
+        do {
+            trocou = false;
+            for (int i = 0; i < count - 1; i++) {
+                if (boias[i].getHashCode() > boias[i + 1].getHashCode()) {
+                    Boia temp = boias[i];
+                    boias[i] = boias[i + 1];
+                    boias[i + 1] = temp;
+                    trocou = true;
+                }
             }
-            boias[j + 1] = key;
-        }
+        } while (trocou);
     }
 
     private static Boia buscarBoia(int hashCode) {
@@ -111,7 +116,7 @@ public class Main {
         }
 
         System.out.print("Informe as coordenadas da nova Boia: ");
-        scanner.nextLine(); // Consome a nova linha
+        scanner.nextLine();
         String coordenadas = scanner.nextLine();
         for (int i = 0; i < count; i++) {
             if (boias[i].getCoordenadas().equals(coordenadas)) {
@@ -126,7 +131,7 @@ public class Main {
         System.out.print("Temperatura: ");
         novaBoia.setTemperatura(scanner.nextDouble());
         boias[count++] = novaBoia;
-        ordenarBoias();
+        ordenarBoiasPorBolha();
     }
 
     private static void atualizarMedidas(Scanner scanner) {
@@ -136,12 +141,12 @@ public class Main {
     private static void pesquisarMedidas(Scanner scanner) {
         System.out.print("Informe o hash code da Boia: ");
         int hashCode = scanner.nextInt();
-        ordenarBoias();
+        ordenarBoiasPorBolha();
         Boia boia = buscarBoia(hashCode);
         if (boia != null) {
             System.out.println(boia);
         } else {
-            System.out.println("Boia não encontrada.");
+            System.out.println("ERRO. Boia não encontrada.");
         }
     }
 }
